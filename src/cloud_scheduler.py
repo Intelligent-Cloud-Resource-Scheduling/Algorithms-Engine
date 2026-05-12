@@ -12,7 +12,7 @@ except ImportError:  # pragma: no cover - optional at import time
 
 @dataclass(frozen=True)
 class Job:
-    id: int
+    id: str  # UUID or integer string
     cpu: float
     ram: float
     duration: float
@@ -20,7 +20,7 @@ class Job:
 
 @dataclass(frozen=True)
 class VM:
-    id: int
+    id: str  # UUID or integer string
     cpu_cap: float
     ram_cap: float
     cost_rate: float
@@ -66,18 +66,18 @@ class CloudScheduler:
 
     @staticmethod
     def _parse_job(raw: Dict[str, Any], fallback_id: int) -> Job:
-        job_id = int(raw.get("id", fallback_id))
-        cpu = float(raw.get("cpu", raw.get("required_cpu")))
-        ram = float(raw.get("ram", raw.get("required_ram")))
-        duration = float(raw.get("duration", raw.get("estimated_duration")))
+        job_id = str(raw.get("id", fallback_id))
+        cpu = float(raw.get("cpu", raw.get("required_cpu", 1)))
+        ram = float(raw.get("ram", raw.get("required_ram", 1)))
+        duration = float(raw.get("duration", raw.get("estimated_duration", 0)))
         return Job(id=job_id, cpu=cpu, ram=ram, duration=duration)
 
     @staticmethod
     def _parse_vm(raw: Dict[str, Any], fallback_id: int) -> VM:
-        vm_id = int(raw.get("id", fallback_id))
-        cpu_cap = float(raw.get("cpu_cap", raw.get("cpu_capacity")))
-        ram_cap = float(raw.get("ram_cap", raw.get("ram_capacity")))
-        cost_rate = float(raw.get("cost_rate", raw.get("cost_rate_per_second")))
+        vm_id = str(raw.get("id", fallback_id))
+        cpu_cap = float(raw.get("cpu_cap", raw.get("cpu_capacity", 1)))
+        ram_cap = float(raw.get("ram_cap", raw.get("ram_capacity", 1)))
+        cost_rate = float(raw.get("cost_rate", raw.get("cost_rate_per_second", 0)))
         return VM(id=vm_id, cpu_cap=cpu_cap, ram_cap=ram_cap, cost_rate=cost_rate)
 
     def simulate_execution(self, vm: VM, assigned_jobs: Sequence[Job]) -> SimulationResult:
