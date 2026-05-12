@@ -1,18 +1,18 @@
 services:
   algorithms-engine:
     build:
-      context: ./app          # all source files live in the app/ subdirectory
+      context: ./app         # all source files live in the app/ subdirectory
       dockerfile: Dockerfile
     container_name: algorithms-engine
     restart: unless-stopped
     ports:
-      - "${PORT:-8000}:${PORT:-8000}"
+      - "8000:8000"
     environment:
       # URL of the backend server that will receive the scheduling results.
       # Override via .env file or by setting the shell variable before running.
-      CALLBACK_SERVER_URL: ${CALLBACK_SERVER_URL:-}
-      HOST: ${HOST:-0.0.0.0}
-      PORT: ${PORT:-8000}
+      CALLBACK_SERVER_URL: "http://51.20.95.111:3500"
+      HOST: "0.0.0.0"
+      PORT: "8000"
     env_file:
       - path: .env
         required: false       # won't fail if .env doesn't exist yet
